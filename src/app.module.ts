@@ -4,6 +4,11 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import * as Joi from 'joi';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
+import { Brand } from './common/entities/brand.entity';
+import { ProductPrice } from './common/entities/product-price.entity';
+import { Product } from './common/entities/product.entity';
+import { User } from './common/entities/user.entity';
+
 const typeOrmModuleOptions = {
   useFactory: async (configService: ConfigService): Promise<TypeOrmModuleOptions> => ({
     namingStrategy: new SnakeNamingStrategy(),
@@ -14,7 +19,7 @@ const typeOrmModuleOptions = {
     password: configService.get('DB_PASSWORD'),
     database: configService.get('DB_NAME'),
     synchronize: configService.get('DB_SYNC'),
-    entities: [],
+    entities: [User, Brand, Product, ProductPrice],
     logging: true,
   }),
   inject: [ConfigService],
