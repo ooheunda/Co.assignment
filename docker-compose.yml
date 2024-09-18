@@ -1,0 +1,39 @@
+services:
+  main:
+    container_name: main-server
+    build:
+      context: .
+      target: development
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    restart: unless-stopped
+    command: npm run start:dev
+    env_file:
+      - .env
+    networks:
+      - webnet
+    depends_on:
+      - db
+  db:
+    container_name: mysql
+    image: mysql:8
+    networks:
+      - webnet
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_DATA: /var/lib/mysql/data
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysqldata:/var/lib/mysql
+
+volumes:
+  mysqldata:
+    driver: local
+
+networks:
+  webnet:
