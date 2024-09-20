@@ -4,6 +4,7 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import * as Joi from 'joi';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
+import { AuthModule } from './auth/auth.module';
 import { Brand } from './common/entities/brand.entity';
 import { ProductPrice } from './common/entities/product-price.entity';
 import { Product } from './common/entities/product.entity';
@@ -38,8 +39,10 @@ const typeOrmModuleOptions = {
         DB_PASSWORD: Joi.string().required(),
         DB_NAME: Joi.string().required(),
         DB_SYNC: Joi.boolean().required(),
+        BCRYPT_SALT: Joi.number().required(),
       }),
     }),
+    AuthModule,
   ],
   controllers: [],
   providers: [],
