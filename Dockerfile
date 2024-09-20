@@ -21,7 +21,6 @@ COPY package*.json ./
 RUN npm install --only=production
 
 COPY --from=development /usr/src/app/dist ./dist
-COPY --from=development /usr/src/app/package*.json ./
 
 EXPOSE ${SERVER_PORT}
 
