@@ -40,6 +40,7 @@ const typeOrmModuleOptions = {
         DB_NAME: Joi.string().required(),
         DB_SYNC: Joi.boolean().required(),
         BCRYPT_SALT: Joi.number().required(),
+        JWT_SECRET: Joi.string().required(),
       }),
     }),
     AuthModule,
