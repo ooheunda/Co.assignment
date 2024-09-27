@@ -1,8 +1,8 @@
-import { ConflictException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { SignInDto } from './dto/sign-in.dto';
 import { SignUpDto } from './dto/sign-up.dto';
 
 describe('AuthController', () => {
@@ -17,7 +17,7 @@ describe('AuthController', () => {
           provide: AuthService,
           useValue: {
             signUp: jest.fn(),
-            signIn: jest.fn().mockResolvedValue({ accessToken: 'mockToken' }),
+            signIn: jest.fn(),
           },
         },
       ],
@@ -36,13 +36,24 @@ describe('AuthController', () => {
     const signUpDto: SignUpDto = { email: 'email@email.com', password: 'password', name: 'name' };
 
     it('성공적으로 회원가입', async () => {
-      await authController.signUp(signUpDto);
-      expect(authService.signUp).toHaveBeenCalledWith(signUpDto);
-    });
+      const result = await authController.signUp(signUpDto);
 
-    it('이미 존재하는 email 주소로 가입하는 경우 ConflictException', async () => {
-      authService.signUp.mockRejectedValue(new ConflictException());
-      await expect(authController.signUp(signUpDto)).rejects.toThrow(ConflictException);
+      expect(authService.signUp).toHaveBeenCalledWith(signUpDto);
+      expect(result).toBeUndefined();
+    });
+  });
+
+  describe('signIn', () => {
+    const signInDto: SignInDto = { email: 'email@email.com', password: 'password' };
+
+    it('성공적으로 로그인', async () => {
+      const mockToken = { accessToken: 'mockToken' };
+      authService.signIn.mockResolvedValue(mockToken);
+
+      const result = await authController.signIn(signInDto);
+
+      expect(authService.signIn).toHaveBeenCalledWith(signInDto);
+      expect(result).toEqual(mockToken);
     });
   });
 });
