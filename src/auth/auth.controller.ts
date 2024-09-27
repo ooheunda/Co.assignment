@@ -18,6 +18,11 @@ export class AuthController {
     await this.authService.signUp(signUpDto);
   }
 
+  /**
+   * 로그인 API
+   * @param signInDto
+   * @returns Access Token
+   */
   @Post('sign-in')
   @HttpCode(HttpStatus.OK)
   async signIn(@Body() signInDto: SignInDto): Promise<{ accessToken: string }> {
