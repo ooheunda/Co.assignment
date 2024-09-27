@@ -2,7 +2,7 @@ import { ConflictException, Injectable, NotFoundException, UnauthorizedException
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { compare, hash } from 'bcryptjs';
+import * as bcrypt from 'bcryptjs';
 import { Repository } from 'typeorm';
 
 import { User } from '../common/entities/user.entity';
@@ -28,7 +28,7 @@ export class AuthService {
     }
 
     const salt = await this.configService.get('BCRYPT_SALT');
-    const hashedPassword = await hash(password, salt);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
     await this.userRepository.insert({ email, password: hashedPassword, name });
   }
@@ -44,7 +44,7 @@ export class AuthService {
     }
 
     // 비밀번호가 틀린 경우
-    if (!(await compare(password, user.password))) {
+    if (!(await bcrypt.compare(password, user.password))) {
       throw new UnauthorizedException('invalid password');
     }
 
