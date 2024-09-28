@@ -9,6 +9,7 @@ import { Brand } from './common/entities/brand.entity';
 import { ProductPrice } from './common/entities/product-price.entity';
 import { Product } from './common/entities/product.entity';
 import { User } from './common/entities/user.entity';
+import { ProductsModule } from './products/products.module';
 
 const typeOrmModuleOptions = {
   useFactory: async (configService: ConfigService): Promise<TypeOrmModuleOptions> => ({
@@ -44,6 +45,7 @@ const typeOrmModuleOptions = {
       }),
     }),
     AuthModule,
+    ProductsModule,
   ],
   controllers: [],
   providers: [],
