@@ -6,6 +6,7 @@ import * as bcrypt from 'bcryptjs';
 import { Repository } from 'typeorm';
 
 import { User } from '../common/entities/user.entity';
+import { UserPayload } from '../common/types/user-payload.type';
 
 import { SignInDto } from './dto/sign-in.dto';
 import { SignUpDto } from './dto/sign-up.dto';
@@ -48,7 +49,8 @@ export class AuthService {
       throw new UnauthorizedException('invalid password');
     }
 
-    const accessToken = this.jwtService.sign({ sub: email });
+    const payload: UserPayload = { sub: email };
+    const accessToken = this.jwtService.sign(payload);
 
     return { accessToken };
   }
