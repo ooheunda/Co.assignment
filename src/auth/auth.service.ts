@@ -44,6 +44,11 @@ export class AuthService {
       throw new NotFoundException('email not found');
     }
 
+    // 탈퇴한 유저인 경우
+    if (user.deletedAt !== null) {
+      throw new NotFoundException('deleted user');
+    }
+
     // 비밀번호가 틀린 경우
     if (!(await bcrypt.compare(password, user.password))) {
       throw new UnauthorizedException('invalid password');
