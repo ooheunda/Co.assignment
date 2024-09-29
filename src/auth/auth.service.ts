@@ -37,7 +37,7 @@ export class AuthService {
   async signIn(signInDto: SignInDto): Promise<{ accessToken: string }> {
     const { email, password } = signInDto;
 
-    const user = await this.userRepository.findOne({ where: { email }, select: ['password'] });
+    const user = await this.userRepository.findOne({ where: { email }, select: ['password', 'userType'] });
 
     // email이 틀린(없는) 경우
     if (user === null) {
@@ -49,7 +49,7 @@ export class AuthService {
       throw new UnauthorizedException('invalid password');
     }
 
-    const payload: UserPayload = { sub: email };
+    const payload: UserPayload = { sub: email, type: user.userType };
     const accessToken = this.jwtService.sign(payload);
 
     return { accessToken };
