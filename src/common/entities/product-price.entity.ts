@@ -10,6 +10,9 @@ export class ProductPrice extends BaseModel {
   @Column('int', { nullable: false })
   price: number;
 
+  @Column('float', { nullable: false })
+  discountRate: number;
+
   @Column('enum', { enum: UserType, nullable: false })
   userType: UserType;
 
