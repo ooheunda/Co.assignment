@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 
 import { Product } from '../common/entities/product.entity';
 import { UserPayload } from '../common/types/user-payload.type';
+import { UserType } from '../common/types/user-type.enum';
 
 import { ProductQueryDto } from './dto/product-query.dto';
 import { ProductResponseDto } from './dto/product-response.dto';
@@ -52,13 +53,22 @@ export class ProductsService {
 
     if (user === null) {
       return product;
-    }
+    } else {
+      // 로그인 한 경우에만 가격 정보 포함
+      const priceInfo = this.getProductPriceInfo(rawProduct, user.type);
 
-    // 로그인 한 경우에만 가격 정보 포함
+      return {
+        ...priceInfo,
+        ...product,
+      };
+    }
+  }
+
+  private getProductPriceInfo(rawProduct: Product, userType: UserType): Partial<ProductResponseDto> {
     let discountRateByType = 0;
 
     rawProduct.productPrices.forEach((pp) => {
-      if (pp.userType === user.type) {
+      if (pp.userType === userType) {
         discountRateByType = pp.discountRate;
       }
     });
@@ -74,7 +84,6 @@ export class ProductsService {
       basePrice: rawProduct.basePrice,
       discountedPrice: rawProduct.basePrice - rawProduct.basePrice * totalDiscountRate,
       discountRate: totalDiscountRate,
-      ...product,
     };
   }
 }
