@@ -37,7 +37,7 @@ export class AuthService {
   async signIn(signInDto: SignInDto): Promise<{ accessToken: string }> {
     const { email, password } = signInDto;
 
-    const user = await this.userRepository.findOne({ where: { email }, select: ['password', 'userType'] });
+    const user = await this.userRepository.findOne({ where: { email }, select: ['password', 'userType', 'deletedAt'] });
 
     // email이 틀린(없는) 경우
     if (user === null) {

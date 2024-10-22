@@ -91,7 +91,7 @@ describe('AuthService', () => {
 
   describe('signIn', () => {
     const signInDto: SignInDto = { email: 'email@email.com', password: 'password' };
-    const user = { password: 'hashedPassword' } as User;
+    const user = { password: 'hashedPassword', userType: 'userType', deletedAt: null } as unknown as User;
 
     it('성공적으로 로그인하고 accessToken 발급', async () => {
       const mockToken = { accessToken: 'mockToken' };
@@ -102,14 +102,25 @@ describe('AuthService', () => {
 
       const result = await authService.signIn(signInDto);
 
-      expect(userRepository.findOne).toHaveBeenCalledWith({ where: { email: signInDto.email }, select: ['password'] });
+      expect(userRepository.findOne).toHaveBeenCalledWith({
+        where: { email: signInDto.email },
+        select: ['password', 'userType', 'deletedAt'],
+      });
       expect(bcrypt.compare).toHaveBeenCalledWith(signInDto.password, user.password);
-      expect(jwtService.sign).toHaveBeenCalledWith({ sub: signInDto.email });
+      expect(jwtService.sign).toHaveBeenCalledWith({ sub: signInDto.email, type: user.userType });
       expect(result).toEqual(mockToken);
     });
 
     it('email이 틀린(없는) 경우 NotFoundException', async () => {
       userRepository.findOne.mockResolvedValue(null);
+
+      await expect(authService.signIn(signInDto)).rejects.toThrow(NotFoundException);
+      expect(bcrypt.compare).not.toHaveBeenCalled();
+    });
+
+    it('탈퇴한 유저인 경우 NotFoundException', async () => {
+      const deletedUser = { ...user, deletedAt: new Date() } as User;
+      userRepository.findOne.mockResolvedValue(deletedUser);
 
       await expect(authService.signIn(signInDto)).rejects.toThrow(NotFoundException);
       expect(bcrypt.compare).not.toHaveBeenCalled();
