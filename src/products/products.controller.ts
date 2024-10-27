@@ -12,6 +12,12 @@ import { ProductsService } from './products.service';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
+  /**
+   * 상품 목록 조회 API
+   * @param user user의 type이 포함된 user 정보로, 비회원인 경우 null
+   * @param queries ProductQueryDto
+   * @returns 조회된 상품 목록
+   */
   @Get()
   @UseGuards(OptionalAuthGuard)
   async findAll(

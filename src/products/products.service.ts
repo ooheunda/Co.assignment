@@ -13,11 +13,18 @@ import { ProductResponseDto } from './dto/product-response.dto';
 export class ProductsService {
   constructor(@InjectRepository(Product) private readonly productRepository: Repository<Product>) {}
 
+  /**
+   * 로그인 한 경우 가격 정보가 포함된 상품 목록을, 로그인 하지 않은 경우 가격 정보를 제외한 목록을 반환합니다.
+   * @param user
+   * @param queries
+   * @returns
+   */
   async findAll(user: UserPayload | null, queries: ProductQueryDto): Promise<ProductResponseDto[]> {
     const rawProducts = await this.getRawProducts(queries);
     return rawProducts.map((rawProduct) => this.getArrangedProductObj(rawProduct, user));
   }
 
+  // 쿼리 빌더로 raw한 상품 목록을 불러옵니다.
   private async getRawProducts(queries: ProductQueryDto): Promise<Product[]> {
     const { brand, page, pageCount } = queries;
 
@@ -40,6 +47,7 @@ export class ProductsService {
     return products;
   }
 
+  // raw한 상품 목록을 ResponseDto에 맞춰 정리하고, 로그인 한 경우 가격 정보를 포함합니다.
   private getArrangedProductObj(rawProduct: Product, user: UserPayload): ProductResponseDto {
     const product = {
       name: rawProduct.name,
@@ -64,6 +72,7 @@ export class ProductsService {
     }
   }
 
+  // 할인율과 할인 가격을 계산하여 가격 정보를 반환합니다.
   private getProductPriceInfo(rawProduct: Product, userType: UserType): Partial<ProductResponseDto> {
     let discountRateByType = 0;
 

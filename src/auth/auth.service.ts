@@ -19,6 +19,10 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
+  /**
+   * email이 중복되지 않았다면 회원가입합니다.
+   * @param signUpDto
+   */
   async signUp(signUpDto: SignUpDto): Promise<void> {
     const { email, password, name } = signUpDto;
 
@@ -34,6 +38,12 @@ export class AuthService {
     await this.userRepository.insert({ email, password: hashedPassword, name });
   }
 
+  /**
+   * 암호화된 비밀번호와의 대조를 통해 로그인합니다.
+   * 아이디/비밀번호가 다를 때 각각 다른 예외처리를 합니다.
+   * @param signInDto
+   * @returns Access Token
+   */
   async signIn(signInDto: SignInDto): Promise<{ accessToken: string }> {
     const { email, password } = signInDto;
 
