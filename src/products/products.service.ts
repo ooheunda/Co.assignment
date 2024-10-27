@@ -77,13 +77,13 @@ export class ProductsService {
 
     // 월요일에는 할인율 1% 증가
     if (new Date().getDay() === 1) {
-      totalDiscountRate += 0.1;
+      totalDiscountRate += 0.01;
     }
 
     return {
       basePrice: rawProduct.basePrice,
       discountedPrice: rawProduct.basePrice - rawProduct.basePrice * totalDiscountRate,
-      discountRate: totalDiscountRate,
+      discountRate: +totalDiscountRate.toFixed(3),
     };
   }
 }
